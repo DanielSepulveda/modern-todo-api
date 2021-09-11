@@ -5,6 +5,7 @@
     "target": "ES6",
     "outDir": "./dist",
     "baseUrl": "./src",
+    "noEmit": false,
     "paths": {
       "@db/*": ["db/*"],
       "@db": ["db/index"],
