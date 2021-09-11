@@ -2,33 +2,31 @@
   "name": "modern-todomvc",
   "version": "0.1.0",
   "description": "",
+  "license": "ISC",
+  "author": "Daniel Sepulveda",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node --unhandled-rejections=strict ./dist/server.js",
-    "debug": "cross-env DEBUG=* && npm run start",
-    "ts-node-server": "ts-node src/server.ts",
-    "dev-server": "NODE_ENV=development nodemon",
-    "dev": "./scripts/dev.sh",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "cross-env DEBUG=* && npm run start",
+    "dev": "./scripts/dev.sh",
+    "dev-server": "NODE_ENV=development nodemon",
     "postinstall": "chmod +x ./scripts/dev.sh",
-    "precommit": "lint-staged"
+    "prepare": "husky install",
+    "start": "node --unhandled-rejections=strict ./dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ts-node-server": "ts-node src/server.ts"
   },
-  "lint-staged": {
-    "package.json": [
-      "prettier-package-json --write",
-      "git add"
-    ]
+  "dependencies": {
+    "apicache": "^1.6.2",
+    "cors": "^2.8.5",
+    "debug": "^4.3.2",
+    "express": "^4.17.1",
+    "express-pino-logger": "^6.0.0",
+    "helmet": "^4.6.0",
+    "mongoose": "^6.0.5",
+    "morgan": "^1.10.0",
+    "pino": "^6.13.2"
   },
-  "keywords": [
-    "node",
-    "express",
-    "typescript",
-    "mongo",
-    "docker"
-  ],
-  "author": "Daniel Sepulveda",
-  "license": "ISC",
   "devDependencies": {
     "@danielsepulveda/eslint-config": "^1.1.0",
     "@danielsepulveda/prettier-config": "^1.0.0",
@@ -52,15 +50,17 @@
     "tslib": "^2.3.1",
     "typescript": "^4.4.2"
   },
-  "dependencies": {
-    "apicache": "^1.6.2",
-    "cors": "^2.8.5",
-    "debug": "^4.3.2",
-    "express": "^4.17.1",
-    "express-pino-logger": "^6.0.0",
-    "helmet": "^4.6.0",
-    "mongoose": "^6.0.5",
-    "morgan": "^1.10.0",
-    "pino": "^6.13.2"
+  "keywords": [
+    "docker",
+    "express",
+    "mongo",
+    "node",
+    "typescript"
+  ],
+  "lint-staged": {
+    "package.json": [
+      "prettier-package-json --write",
+      "git add"
+    ]
   }
 }
