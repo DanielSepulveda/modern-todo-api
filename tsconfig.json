@@ -4,6 +4,11 @@
     "module": "CommonJS",
     "target": "ES6",
     "outDir": "./dist",
-    "rootDir": "./src"
-  }
+    "baseUrl": "./src",
+    "paths": {
+      "@errors/*": ["errors/*"],
+      "@errors": ["errors/index"]
+    }
+  },
+  "include": ["src/**/*"]
 }

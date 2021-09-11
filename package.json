@@ -23,6 +23,7 @@
     "express": "^4.17.1",
     "express-pino-logger": "^6.0.0",
     "helmet": "^4.6.0",
+    "module-alias": "^2.2.2",
     "mongoose": "^6.0.5",
     "morgan": "^1.10.0",
     "pino": "^6.13.2"
@@ -57,6 +58,10 @@
     "node",
     "typescript"
   ],
+  "_moduleAliases": {
+    "@errors/*": "dist/errors/*",
+    "@errors": "dist/errors/index"
+  },
   "lint-staged": {
     "package.json": [
       "prettier-package-json --write"
