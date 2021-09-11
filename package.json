@@ -11,7 +11,14 @@
     "dev": "./scripts/dev.sh",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "chmod +x ./scripts/dev.sh"
+    "postinstall": "chmod +x ./scripts/dev.sh",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "package.json": [
+      "prettier-package-json --write",
+      "git add"
+    ]
   },
   "keywords": [
     "node",
@@ -35,8 +42,11 @@
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
+    "husky": "^7.0.2",
+    "lint-staged": "^11.1.2",
     "nodemon": "^2.0.12",
     "prettier": "^2.4.0",
+    "prettier-package-json": "^2.6.0",
     "source-map-support": "^0.5.20",
     "ts-node": "^10.2.1",
     "tslib": "^2.3.1",
