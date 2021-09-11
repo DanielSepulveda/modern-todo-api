@@ -15,7 +15,6 @@ const defaultClosedCallback: ConnectionCallback = () => {};
 export interface MongooseConnectionOptions {
   mongoUrl: string;
   onStartConnection: ConnectionCallback;
-  onConnected: ConnectionCallback;
   onConnectionError: ErrorCallback;
   onRecconnected: ConnectionCallback;
   onDisconnection: ErrorCallback;
