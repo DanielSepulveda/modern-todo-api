@@ -6,8 +6,14 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
+      "@db/*": ["db/*"],
+      "@db": ["db/index"],
       "@errors/*": ["errors/*"],
-      "@errors": ["errors/index"]
+      "@errors": ["errors/index"],
+      "@providers/*": ["providers/*"],
+      "@providers": ["providers/index"],
+      "@constants/*": ["constants/*"],
+      "@constants": ["constants/index"]
     }
   },
   "include": ["src/**/*"]
