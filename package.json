@@ -4,7 +4,7 @@
   "description": "",
   "license": "ISC",
   "author": "Daniel Sepulveda",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
     "debug": "cross-env DEBUG=* && npm run start",
