@@ -11,5 +11,5 @@ app.use(compression());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send({ hello: 'world' });
 });
