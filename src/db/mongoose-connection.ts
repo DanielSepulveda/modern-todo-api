@@ -1,60 +1,76 @@
 import { MongoConnectionError } from '@errors';
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose from 'mongoose';
+import { config } from '../config';
 
-export type ConnectionCallback = (mongoUrl: string) => void;
-export type ErrorCallback = (error: Error, mongoUrl: string) => void;
+export type ConnectionCallback = () => void;
+export type ErrorCallback = (error: Error) => void;
 export type DebugCallback = (
   collectionName: string,
   method: string,
   query: any
 ) => void;
 
-const defaultConnectedCallback: ConnectionCallback = () => {};
-const defaultClosedCallback: ConnectionCallback = () => {};
+const noop = () => {};
 
-export interface MongooseConnectionOptions {
-  mongoUrl: string;
+export interface Callbacks {
   onStartConnection: ConnectionCallback;
   onConnectionError: ErrorCallback;
   onRecconnected: ConnectionCallback;
-  onDisconnection: ErrorCallback;
+  onDisconnection: ConnectionCallback;
+  onDebug?: DebugCallback;
 }
 
-const defaultMongooseConnectOptions: ConnectOptions = {
-  // autoIndex: false // Maybe set this in production
-};
-
 export class MongooseConnection {
-  private readonly options: MongooseConnectionOptions;
-
   private onConnectedCallback: ConnectionCallback;
   private onCloseCallback: ConnectionCallback;
+  private readonly callbacks: Callbacks;
 
-  constructor(options: MongooseConnectionOptions) {
-    this.options = options;
-    this.onConnectedCallback = defaultConnectedCallback;
-    this.onCloseCallback = defaultClosedCallback;
+  constructor(callbacks: Callbacks) {
+    this.onConnectedCallback = noop;
+    this.onCloseCallback = noop;
+    this.callbacks = callbacks;
 
-    mongoose.connection.on('error', this.onError);
-    mongoose.connection.on('connected', this.onConnected);
-    mongoose.connection.on('disconnected', this.onDisconnected);
-    mongoose.connection.on('reconnected', this.onReconnected);
-    mongoose.connection.on('close', this.onClose);
+    mongoose.connection.on('error', (...args) => {
+      this.onError(...args);
+    });
+    mongoose.connection.on('connected', () => {
+      this.onConnected();
+    });
+    mongoose.connection.on('disconnected', () => {
+      this.onDisconnected();
+    });
+    mongoose.connection.on('reconnected', () => {
+      this.onReconnected();
+    });
+    mongoose.connection.on('close', () => {
+      this.onClose();
+    });
 
     mongoose.set('returnOriginal', false);
   }
 
   public connect(onConnectedCallback: ConnectionCallback) {
     this.onConnectedCallback = onConnectedCallback;
-    this.options.onStartConnection(this.options.mongoUrl);
+    this.callbacks.onStartConnection();
     mongoose
-      .connect(this.options.mongoUrl, defaultMongooseConnectOptions)
-      .catch(this.onError);
+      .connect(config.mongoUrl, {
+        autoIndex: config.isProduction,
+        authSource: 'admin',
+        auth: {
+          username: config.mongo.user,
+          password: config.mongo.password,
+        },
+      })
+      // This error is already handled with mongoose.connection.on('error')
+      .catch(noop);
   }
 
   public close(onClosed: ConnectionCallback, force: boolean = false) {
     this.onCloseCallback = onClosed;
-    mongoose.connection.close(force).catch(this.onError);
+    mongoose.connection
+      .close(force)
+      // This error is already handled with mongoose.connection.on('error')
+      .catch(noop);
   }
 
   public setDebugCallback(callback: DebugCallback) {
@@ -62,36 +78,30 @@ export class MongooseConnection {
   }
 
   private onConnected() {
-    this.onConnectedCallback(this.options.mongoUrl);
+    this.onConnectedCallback();
   }
 
   private onClose() {
-    this.onCloseCallback(this.options.mongoUrl);
+    this.onCloseCallback();
   }
 
   private onReconnected() {
-    this.options.onRecconnected(this.options.mongoUrl);
+    this.callbacks.onRecconnected();
   }
 
   private onError(error?: Error) {
     if (error != null) {
-      this.options.onConnectionError(error, this.options.mongoUrl);
+      this.callbacks.onConnectionError(error);
+      return;
     }
 
     const connectionError = new MongoConnectionError(
-      `Could not connect to MongoDB at ${this.options.mongoUrl}`
+      `Could not connect to MongoDB at ${config.mongoUrl}`
     );
-    this.options.onConnectionError(connectionError, this.options.mongoUrl);
+    this.callbacks.onConnectionError(connectionError);
   }
 
-  private onDisconnected(error?: Error) {
-    if (error != null) {
-      this.options.onDisconnection(error, this.options.mongoUrl);
-    }
-
-    const connectionError = new MongoConnectionError(
-      `Disconnected from MongoDB at ${this.options.mongoUrl}`
-    );
-    this.options.onDisconnection(connectionError, this.options.mongoUrl);
+  private onDisconnected() {
+    this.callbacks.onDisconnection();
   }
 }

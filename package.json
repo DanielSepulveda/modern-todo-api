@@ -12,9 +12,9 @@
     "dev-server": "NODE_ENV=development nodemon",
     "postinstall": "chmod +x ./scripts/dev.sh",
     "prepare": "husky install",
-    "start": "node --unhandled-rejections=strict ./dist/server.js",
+    "start": "node -r tsconfig-paths/register --unhandled-rejections=strict ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "ts-node-server": "ts-node src/server.ts"
+    "ts-node-server": "ts-node -r tsconfig-paths/register src/server.ts"
   },
   "dependencies": {
     "apicache": "^1.6.2",
@@ -53,6 +53,7 @@
     "prettier-package-json": "^2.6.0",
     "source-map-support": "^0.5.20",
     "ts-node": "^10.2.1",
+    "tsconfig-paths": "^3.11.0",
     "tslib": "^2.3.1",
     "typescript": "^4.4.2"
   },
@@ -63,16 +64,6 @@
     "node",
     "typescript"
   ],
-  "_moduleAliases": {
-    "@db/*": "dist/db/*",
-    "@db": "dist/db/index",
-    "@errors/*": "dist/errors/*",
-    "@errors": "dist/errors/index",
-    "@providers/*": "dist/providers/*",
-    "@providers": "dist/providers/index",
-    "@constants/*": "dist/constants/*",
-    "@constants": "dist/constants/index"
-  },
   "lint-staged": {
     "package.json": [
       "prettier-package-json --write"

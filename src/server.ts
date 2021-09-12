@@ -1,13 +1,11 @@
 import util from 'util';
 import { processExceptions, processSignals } from '@constants';
-import { MongooseConnection } from '@db';
+import { Callbacks, MongooseConnection } from '@db';
 import { Logger } from '@providers';
 import pino from 'pino';
 // import ExpressPinoLogger from 'express-pino-logger';
 import { app } from './app';
 import { config, validateConfig } from './config';
-
-require('module-alias/register');
 
 validateConfig(config, () => {
   Logger.error('Invalid env variables.');
@@ -18,40 +16,41 @@ validateConfig(config, () => {
 //   logger: Logger,
 // });
 
-const mongooseConnection = new MongooseConnection({
-  mongoUrl: config.mongoUrl,
-  onStartConnection: (mongoUrl) => {
-    Logger.info(`Connecting to MongoDB at ${mongoUrl}`);
+const mongooseCallbacks: Callbacks = {
+  onStartConnection() {
+    Logger.info(`Connecting to MongoDB at ${config.mongoUrl}`);
   },
-  onConnectionError: (error, mongoUrl) => {
-    Logger.error(error, `Could not connect to MongoDB at ${mongoUrl}`);
+  onConnectionError(error) {
+    Logger.error(error, `Could not connect to MongoDB at ${config.mongoUrl}`);
   },
-  onRecconnected: (mongoUrl) => {
-    Logger.info(`Reconnected to MongoDB at ${mongoUrl}`);
+  onRecconnected() {
+    Logger.info(`Reconnected to MongoDB at ${config.mongoUrl}`);
   },
-  onDisconnection: (error, mongoUrl) => {
-    Logger.info(error, `Disconnected from MongoDB at ${mongoUrl}`);
+  onDisconnection() {
+    Logger.info(`Disconnected from MongoDB at ${config.mongoUrl}`);
   },
-});
+};
 
 if (config.isDevelopment) {
-  mongooseConnection.setDebugCallback((collectionName, method, query) => {
+  mongooseCallbacks.onDebug = (collectionName, method, query) => {
     const message = `${collectionName}.${method}(${util.inspect(query, {
       colors: true,
       depth: null,
     })})`;
 
     Logger.debug(message);
-  });
+  };
 }
+
+const mongooseConnection = new MongooseConnection(mongooseCallbacks);
 
 const serve = () =>
   app.listen(config.port, () => {
     Logger.info(`Express server started at ${config.url}`);
   });
 
-mongooseConnection.connect((mongoUrl) => {
-  Logger.info(`Connected to MongoDB at ${mongoUrl}`);
+mongooseConnection.connect(() => {
+  Logger.info(`Connected to MongoDB at ${config.mongoUrl}`);
   serve();
 });
 
@@ -60,8 +59,8 @@ mongooseConnection.connect((mongoUrl) => {
     signal,
     pino.final(Logger, (err, finalLogger) => {
       finalLogger.error(err, signal);
-      mongooseConnection.close((mongoUrl) => {
-        finalLogger.info(`Closed connection to MongoDB at ${mongoUrl}`);
+      mongooseConnection.close(() => {
+        finalLogger.info(`Closed connection to MongoDB at ${config.mongoUrl}`);
       });
       process.exit(1);
     })

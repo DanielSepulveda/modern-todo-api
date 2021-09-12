@@ -2,10 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const getMongoAuth = (user: string = '', pass: string = '') => {
-  return `${user}:${pass}`;
-};
-
 const constructConfig = () => {
   const node = process.env['NODE_ENV'] ?? 'development';
   const port = process.env['PORT'] ?? 3000;
@@ -25,10 +21,7 @@ const constructConfig = () => {
     port,
     url: process.env['APP_URL'] ?? `http://localhost:${port}`,
     mongo: mongoConfig,
-    mongoUrl: `mongodb://${getMongoAuth(
-      mongoConfig.user,
-      mongoConfig.password
-    )}@${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`,
+    mongoUrl: `mongodb://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`,
   };
 };
 
