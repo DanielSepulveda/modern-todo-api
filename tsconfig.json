@@ -5,17 +5,7 @@
     "target": "ES6",
     "outDir": "./dist",
     "baseUrl": "./src",
-    "noEmit": false,
-    "paths": {
-      "@db/*": ["db/*"],
-      "@db": ["db/index"],
-      "@errors/*": ["errors/*"],
-      "@errors": ["errors/index"],
-      "@providers/*": ["providers/*"],
-      "@providers": ["providers/index"],
-      "@constants/*": ["constants/*"],
-      "@constants": ["constants/index"]
-    }
+    "noEmit": false
   },
   "include": ["src/**/*"]
 }

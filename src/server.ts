@@ -1,11 +1,11 @@
 import util from 'util';
-import { processExceptions, processSignals } from '@constants';
-import { Callbacks, MongooseConnection } from '@db';
-import { Logger } from '@providers';
 import pino from 'pino';
-// import ExpressPinoLogger from 'express-pino-logger';
 import { app } from './app';
 import { config, validateConfig } from './config';
+import { processExceptions, processSignals } from './constants';
+import { Callbacks, MongooseConnection } from './db';
+import { Logger } from './providers';
+// import ExpressPinoLogger from 'express-pino-logger';
 
 validateConfig(config, () => {
   Logger.error('Invalid env variables.');

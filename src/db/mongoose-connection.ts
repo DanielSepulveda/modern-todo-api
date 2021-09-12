@@ -1,6 +1,6 @@
-import { MongoConnectionError } from '@errors';
 import mongoose from 'mongoose';
 import { config } from '../config';
+import { MongoConnectionError } from '../errors';
 
 export type ConnectionCallback = () => void;
 export type ErrorCallback = (error: Error) => void;
