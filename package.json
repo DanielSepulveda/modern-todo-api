@@ -12,7 +12,7 @@
     "dev-server": "NODE_ENV=development nodemon",
     "postinstall": "chmod +x ./scripts/dev.sh",
     "prepare": "husky install",
-    "start": "node --unhandled-rejections=strict ./dist/server.js",
+    "start": "node ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "ts-node-server": "ts-node src/server.ts"
   },

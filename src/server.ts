@@ -50,7 +50,7 @@ const serve = async () => {
   });
 
   const server = app.listen(config.port, () => {
-    Logger.info(`Express server started at ${config.url}`);
+    Logger.info(`Express server started at port ${config.port}`);
   });
 
   [...processExceptions, ...processSignals].forEach((signal) => {

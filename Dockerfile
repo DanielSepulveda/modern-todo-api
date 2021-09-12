@@ -13,7 +13,11 @@ USER node
 RUN mkdir /home/node/app
 WORKDIR /home/node/app
 COPY --from=build --chown=node:node ./build/node_modules ./node_modules
-COPY --from=build --chown=node:node ./dist ./dist
+COPY --from=build --chown=node:node ./build/dist ./dist
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV MONGO_USER=mongo
+ENV MONGO_PASSWORD=mongo
 CMD ["node", "dist/server.js"]
 
 # $ docker run \

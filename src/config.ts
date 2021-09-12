@@ -19,7 +19,6 @@ const constructConfig = () => {
     isProduction: node === 'production',
     isDevelopment: node === 'development',
     port,
-    url: process.env['APP_URL'] ?? `http://localhost:${port}`,
     mongo: mongoConfig,
     mongoUrl: `mongodb://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`,
   };
