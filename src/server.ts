@@ -44,25 +44,37 @@ if (config.isDevelopment) {
 
 const mongooseConnection = new MongooseConnection(mongooseCallbacks);
 
-const serve = () =>
-  app.listen(config.port, () => {
+const serve = async () => {
+  await mongooseConnection.connect(() => {
+    Logger.info(`Connected to MongoDB at ${config.mongoUrl}`);
+  });
+
+  const server = app.listen(config.port, () => {
     Logger.info(`Express server started at ${config.url}`);
   });
 
-mongooseConnection.connect(() => {
-  Logger.info(`Connected to MongoDB at ${config.mongoUrl}`);
-  serve();
-});
+  [...processExceptions, ...processSignals].forEach((signal) => {
+    process.on(
+      signal,
+      pino.final(Logger, (err, finalLogger) => {
+        finalLogger.error(err, signal);
 
-[...processExceptions, ...processSignals].forEach((signal) => {
-  process.on(
-    signal,
-    pino.final(Logger, (err, finalLogger) => {
-      finalLogger.error(err, signal);
-      mongooseConnection.close(() => {
-        finalLogger.info(`Closed connection to MongoDB at ${config.mongoUrl}`);
-      });
-      process.exit(1);
-    })
-  );
-});
+        finalLogger.info('Gracefully shutting down');
+
+        server.close(() => {
+          finalLogger.info('Express server closed');
+
+          mongooseConnection.close(() => {
+            finalLogger.info(
+              `Closed connection to MongoDB at ${config.mongoUrl}`
+            );
+
+            process.exit(0);
+          });
+        });
+      })
+    );
+  });
+};
+
+serve().catch(() => {});

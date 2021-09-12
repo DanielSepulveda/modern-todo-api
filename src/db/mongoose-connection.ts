@@ -49,20 +49,17 @@ export class MongooseConnection {
     mongoose.set('returnOriginal', false);
   }
 
-  public connect(onConnectedCallback: ConnectionCallback) {
+  public async connect(onConnectedCallback: ConnectionCallback) {
     this.onConnectedCallback = onConnectedCallback;
     this.callbacks.onStartConnection();
-    mongoose
-      .connect(config.mongoUrl, {
-        autoIndex: config.isProduction,
-        authSource: 'admin',
-        auth: {
-          username: config.mongo.user,
-          password: config.mongo.password,
-        },
-      })
-      // This error is already handled with mongoose.connection.on('error')
-      .catch(noop);
+    await mongoose.connect(config.mongoUrl, {
+      autoIndex: config.isProduction,
+      authSource: 'admin',
+      auth: {
+        username: config.mongo.user,
+        password: config.mongo.password,
+      },
+    });
   }
 
   public close(onClosed: ConnectionCallback, force: boolean = false) {

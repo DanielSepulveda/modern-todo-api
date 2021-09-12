@@ -53,3 +53,5 @@ Its a best practice to run a single process per docker container, this is why pm
 Locally mongo is run with docker-compose, in prod a cloud mongo service should be used, such as mongo atlas.
 
 Mongoose was chosen above other ORMs because of its specialization in mongo.
+
+DON'T run the server using npm scripts as these have been found to produce weird errors, such as double exit signals, read more [here](https://lisk.com/blog/development/why-we-stopped-using-npm-start-child-processes)
