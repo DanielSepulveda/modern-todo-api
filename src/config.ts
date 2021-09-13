@@ -1,10 +1,11 @@
+import path from 'path';
 import nconf from 'nconf';
 import { buildMongoUrl } from './db';
 
 nconf
   .argv() // loads from process.argv
   .env() // loads from process.env
-  .file('../config.json');
+  .file(path.join(__dirname, '..', 'config.json'));
 
 nconf.required(['MONGO_USER', 'MONGO_PASSWORD']);
 

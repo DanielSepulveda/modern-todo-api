@@ -1,9 +1,7 @@
-import { HttpTerminator } from 'http-terminator';
 import pino from 'pino';
 import { DbConnection } from '../types/db';
 
 export type OnSignalParams = {
-  server: HttpTerminator;
   db: DbConnection;
   logger: pino.Logger;
 };

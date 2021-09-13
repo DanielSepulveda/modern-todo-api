@@ -153,3 +153,6 @@ dist
 
 # mongo
 data/
+
+# env
+config.json

@@ -4,9 +4,6 @@ import { HealthCheckData, OnSignalParams } from '../types/server';
 export async function onSignal(params: OnSignalParams) {
   params.logger.warn('Server is starting to gracefully shut down');
 
-  await params.server.terminate();
-  params.logger.warn('Http server closed');
-
   await params.db.close(() => {
     params.logger.warn(`Db connection closed`);
   });

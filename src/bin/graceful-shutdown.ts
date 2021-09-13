@@ -1,6 +1,5 @@
 import http from 'http';
 import { createTerminus } from '@godaddy/terminus';
-import { createHttpTerminator } from 'http-terminator';
 import pino from 'pino';
 import { DbConnection } from 'types/db';
 import { processExceptions, processSignals } from '../constants';
@@ -13,10 +12,6 @@ type SetupGracefulShutdown = {
 };
 
 export function setupGracefulShutdown(config: SetupGracefulShutdown) {
-  const httpTerminator = createHttpTerminator({
-    server: config.server,
-  });
-
   createTerminus(config.server, {
     healthChecks: {
       '/healthcheck': async () => {
@@ -26,7 +21,6 @@ export function setupGracefulShutdown(config: SetupGracefulShutdown) {
     signals: [...processExceptions, ...processSignals],
     onSignal: async () => {
       return await onSignal({
-        server: httpTerminator,
         db: config.db,
         logger: config.logger,
       });

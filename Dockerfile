@@ -3,7 +3,7 @@ FROM node:fermium-alpine AS build
 WORKDIR /build
 COPY package*.json ./
 COPY tsconfig.json ./
-RUN npm ci
+RUN npm ci --only=production
 COPY . .
 RUN npm run build
 
@@ -19,6 +19,15 @@ ENV PORT=3000
 ENV MONGO_USER=mongo
 ENV MONGO_PASSWORD=mongo
 CMD ["node", "dist/bin/www.js"]
+
+# Test build run locally
+# docker \
+  # run --network=modern-todomvc_default \
+  # -e "MONGO_HOST=mongo" \
+  # -p 3000:3000 \
+  # --init \
+  # --rm \
+  # modern-todomvc \
 
 # $ docker run \
 #   -e "NODE_ENV=production" \
