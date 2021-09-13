@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   mongo:
@@ -6,9 +6,9 @@ services:
     image: mongo:5
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_ROOT_USERNAME: mongo # local development user
+      MONGO_INITDB_ROOT_PASSWORD: mongo # local development password
     volumes:
       - ./data/dev/mongo:/data/db
     ports:
-      - "27017:27017"
+      - '27017:27017'
