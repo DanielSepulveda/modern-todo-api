@@ -55,3 +55,5 @@ Locally mongo is run with docker-compose, in prod a cloud mongo service should b
 Mongoose was chosen above other ORMs because of its specialization in mongo.
 
 DON'T run the server using npm scripts as these have been found to produce weird errors, such as double exit signals, read more [here](https://lisk.com/blog/development/why-we-stopped-using-npm-start-child-processes)
+
+It's not recommended to set secrets (auth, keys, etc) through env variables, as those could be inspected by an intruder if they obtain access to the running process host or container
