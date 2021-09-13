@@ -1,17 +1,31 @@
-import dotenv from 'dotenv';
+import nconf from 'nconf';
+import { buildMongoUrl } from './db';
 
-dotenv.config();
+nconf
+  .argv() // loads from process.argv
+  .env() // loads from process.env
+  .file('../config.json');
+
+nconf.required(['MONGO_USER', 'MONGO_PASSWORD']);
+
+nconf.defaults({
+  NODE_ENV: 'development',
+  PORT: 3000,
+  MONGO_HOST: 'localhost',
+  MONGO_PORT: '27017',
+  MONGO_DB: 'todos',
+});
 
 const constructConfig = () => {
-  const node = process.env['NODE_ENV'] ?? 'development';
-  const port = process.env['PORT'] ?? 3000;
+  const node = nconf.get('NODE_ENV');
+  const port = nconf.get('PORT');
 
   const mongoConfig = {
-    user: process.env['MONGO_USER'],
-    password: process.env['MONGO_PASSWORD'],
-    host: process.env['MONGO_HOST'] ?? 'localhost',
-    port: process.env['MONGO_PORT'] ?? '27017',
-    db: process.env['MONGO_DB'] ?? 'todos',
+    user: nconf.get('MONGO_USER'),
+    password: nconf.get('MONGO_PASSWORD'),
+    host: nconf.get('MONGO_HOST'),
+    port: nconf.get('MONGO_PORT'),
+    db: nconf.get('MONGO_DB'),
   };
 
   return {
@@ -20,17 +34,12 @@ const constructConfig = () => {
     isDevelopment: node === 'development',
     port,
     mongo: mongoConfig,
-    mongoUrl: `mongodb://${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.db}`,
+    mongoUrl: buildMongoUrl({
+      host: String(mongoConfig.host),
+      port: String(mongoConfig.port),
+      db: String(mongoConfig.db),
+    }),
   };
-};
-
-export const validateConfig = (
-  config: ReturnType<typeof constructConfig>,
-  onError: () => void
-) => {
-  if (config.mongo.user == null || config.mongo.password == null) {
-    onError();
-  }
 };
 
 export const config = constructConfig();

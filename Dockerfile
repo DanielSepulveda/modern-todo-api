@@ -18,7 +18,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV MONGO_USER=mongo
 ENV MONGO_PASSWORD=mongo
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/bin/www.js"]
 
 # $ docker run \
 #   -e "NODE_ENV=production" \
